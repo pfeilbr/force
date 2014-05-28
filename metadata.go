@@ -190,6 +190,16 @@ type RichTextAreaField struct {
 	VisibleLines int    `xml:"visibleLines"`
 }
 
+type LookupField struct {
+	Object string `xml:"object"`
+	Label  string `xml:"label"`
+}
+
+type LookupFieldRequired struct {
+	Object string `xml:"object"`
+	Label  string `xml:"label"`
+}
+
 func NewForceMetadata(force *Force) (fm *ForceMetadata) {
 	fm = &ForceMetadata{ApiVersion: "28.0", Force: force}
 	return
@@ -308,6 +318,11 @@ func (fm *ForceMetadata) ValidateFieldOptions(typ string, options map[string]str
 		attrs = getAttributes(&GeolocationField{})
 		s = reflect.ValueOf(&GeolocationFieldRequired{true, 5}).Elem()
 		break
+	case "lookup":
+		attrs = getAttributes(&LookupField{})
+		s = reflect.ValueOf(&LookupFieldRequired{}).Elem()
+		break
+
 	default:
 		break
 	}
@@ -471,17 +486,19 @@ func (fm *ForceMetadata) CreateCustomField(object, field, typ string, options ma
 					<relationshipLabel>%ss</relationshipLabel>
 					<relationshipName>%s_del</relationshipName>
 					`
-		scanner := bufio.NewScanner(os.Stdin)
+		//scanner := bufio.NewScanner(os.Stdin)
 
 		var inp, inp2 string
-		fmt.Print("Enter object to lookup: ")
+		//fmt.Print("Enter object to lookup: ")
 
-		scanner.Scan()
-		inp = scanner.Text()
+		//scanner.Scan()
+		//inp = scanner.Text()
+		inp = options["object"]
 
-		fmt.Print("What is the label for the loookup? ")
-		scanner.Scan()
-		inp2 = scanner.Text()
+		//fmt.Print("What is the label for the loookup? ")
+		//scanner.Scan()
+		//inp2 = scanner.Text()
+		inp2 = options["label"]
 
 		soapField = fmt.Sprintf(soapField, inp, inp2, strings.Replace(inp2, " ", "_", -1))
 	case "masterdetail":
